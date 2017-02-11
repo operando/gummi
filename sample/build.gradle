@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.os.operando.jsonrpc"
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+def okhttp_version = "3.4.1"
+def retrofit_version = "2.1.0"
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:25.1.1'
+
+    provided "org.projectlombok:lombok:1.16.10"
+
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+
+    compile 'io.reactivex:rxjava:1.1.10'
+
+    compile 'io.reactivex:rxandroid:1.2.1'
+
+    compile 'com.annimon:stream:1.1.5'
+
+    compile "com.squareup.okhttp3:okhttp:${okhttp_version}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okhttp_version}"
+
+    compile "com.squareup.retrofit2:retrofit:${retrofit_version}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofit_version}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofit_version}"
+
+    compile 'com.os.operando.guild:guild:1.4.0'
+
+    compile project(':gummi')
+}

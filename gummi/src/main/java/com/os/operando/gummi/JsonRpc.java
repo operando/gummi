@@ -77,7 +77,7 @@ public class JsonRpc {
         String id = jsonObject.get(KEY_ID).getAsString();
         if (result != null) {
             RequestType<T> requestType = requests.get(id);
-            T response = GSON.fromJson(result, requestType.getType());
+            T response = GSON.fromJson(result, requestType.getResponseType());
             if (response == null) {
                 // TODO: error code
                 JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", jsonObject);

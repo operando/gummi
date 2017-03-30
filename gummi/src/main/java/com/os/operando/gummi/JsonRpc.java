@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class JsonRpc {
 
-    public static final String VERSION = "2.0";
+    private static final String VERSION = "2.0";
 
     private static final String KEY_ID = "id";
     private static final String KEY_JSONRPC = "jsonrpc";
@@ -28,7 +28,7 @@ public class JsonRpc {
 
     private final RequestIdentifierGenerator requestIdentifierGenerator;
     private Map<String, RequestType> requests = new HashMap<>();
-    private Map<String, RequestType.ResponseCallback> handlers = new HashMap<>();
+    private Map<String, ResponseCallback> handlers = new HashMap<>();
 
     public JsonRpc(RequestIdentifierGenerator requestIdentifierGenerator) {
         this.requestIdentifierGenerator = requestIdentifierGenerator;
@@ -43,7 +43,7 @@ public class JsonRpc {
         return requests;
     }
 
-    public <T> void addRequest(RequestType<T> requestType, RequestType.ResponseCallback<T> responseCallback) {
+    public <T> void addRequest(RequestType<T> requestType, ResponseCallback<T> responseCallback) {
         String id = requestIdentifierGenerator.next();
         requests.put(id, requestType);
         handlers.put(id, responseCallback);
@@ -63,7 +63,7 @@ public class JsonRpc {
     }
 
     private <T> void handleResponse(JsonObject jsonObject) {
-        RequestType.ResponseCallback<T> responseCallback = handlers.get(jsonObject.get(KEY_ID).getAsString());
+        ResponseCallback<T> responseCallback = handlers.get(jsonObject.get(KEY_ID).getAsString());
 
         String version = jsonObject.get(KEY_JSONRPC).getAsString();
         if (!VERSION.equals(version)) {
@@ -71,6 +71,7 @@ public class JsonRpc {
             JsonRpcException jsonRpcException = new JsonRpcException(1, "version mismatch.", jsonObject);
             Result<T> errorResult = new Result<>(null, jsonRpcException);
             responseCallback.onResponse(errorResult);
+            return;
         }
 
         JsonElement result = jsonObject.get(KEY_RESULT);
@@ -83,6 +84,7 @@ public class JsonRpc {
                 JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", jsonObject);
                 Result<T> errorResult = new Result<>(null, jsonRpcException);
                 responseCallback.onResponse(errorResult);
+                return;
             }
             Result<T> responseResult = new Result<>(response, null);
             responseCallback.onResponse(responseResult);

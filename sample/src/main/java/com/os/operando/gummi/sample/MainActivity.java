@@ -5,10 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.os.operando.gummi.R;
-import com.os.operando.gummi.RequestType;
 import com.os.operando.gummi.sample.api.RxApiClient;
 
-import lombok.ToString;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -30,18 +28,5 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, pair.getFirst().toString());
                     Log.d(TAG, pair.getSecond().toString());
                 });
-    }
-
-    class TestService extends RequestType<TestResponse> {
-
-        @Override
-        public String getMethod() {
-            return "TestService.Test";
-        }
-    }
-
-    @ToString
-    class TestResponse {
-        String test;
     }
 }

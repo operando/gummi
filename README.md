@@ -2,7 +2,7 @@
 
 [JSON-RPC 2.0](http://www.jsonrpc.org/specification) client library in Java.
 
-#### Download
+### Download
 
 [![Download](https://api.bintray.com/packages/operandoos/maven/gummi/images/download.svg?version=1.0.0) ](https://bintray.com/operandoos/maven/gummi/1.0.0/link) or grab via Gradle:
 
@@ -21,6 +21,10 @@ or Maven:
 </dependency>
 ```
 
+### Dependencies
+
+* [google-gson](https://github.com/google/gson)
+ * In the future dependency will be removed
 
 
 ### License

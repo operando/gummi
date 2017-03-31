@@ -2,6 +2,27 @@
 
 [JSON-RPC 2.0](http://www.jsonrpc.org/specification) client library in Java.
 
+#### Download
+
+[![Download](https://api.bintray.com/packages/operandoos/maven/gummi/images/download.svg?version=1.0.0) ](https://bintray.com/operandoos/maven/gummi/1.0.0/link) or grab via Gradle:
+
+```gradle
+compile 'com.os.operando.gummi:gummi:1.0.0'
+```
+
+or Maven:
+
+```
+<dependency>
+  <groupId>com.os.operando.gummi</groupId>
+  <artifactId>gummi</artifactId>
+  <version>1.0.0</version>
+  <type>pom</type>
+</dependency>
+```
+
+
+
 ### License
 
 ```

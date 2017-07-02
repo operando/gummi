@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.os.operando.gummi.R;
-import com.os.operando.gummi.sample.api.RxApiClient;
+import com.os.operando.gummi.sample.api.exception.RxApiClient2;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -19,9 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RxApiClient rxApiClient = new RxApiClient();
+        RxApiClient2 rxApiClient = new RxApiClient2();
         rxApiClient.responseFrom(new TestService(), new TestService())
-                .flatMap(pair -> rxApiClient.responseFrom(new TestService(), new TestService()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {

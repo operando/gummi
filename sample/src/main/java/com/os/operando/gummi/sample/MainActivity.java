@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.os.operando.gummi.R;
-import com.os.operando.gummi.sample.api.exception.RxApiClient2;
+import com.os.operando.gummi.sample.api.RxApiClient2;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -26,6 +26,6 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(pair -> {
                     Log.d(TAG, pair.getFirst().toString());
                     Log.d(TAG, pair.getSecond().toString());
-                });
+                }, Throwable::printStackTrace);
     }
 }

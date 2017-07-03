@@ -73,10 +73,13 @@ public class JsonRpc2 {
     public static class Request<T> {
         public RequestType<T> requestType;
         public String id;
+        public JsonObject jsonObject;
 
-        public Request(RequestType<T> requestType, String id) {
+
+        public Request(RequestType<T> requestType, String id, JsonObject jsonObject) {
             this.requestType = requestType;
             this.id = id;
+            this.jsonObject = jsonObject;
         }
     }
 
@@ -166,9 +169,6 @@ public class JsonRpc2 {
                     return new Result<>(null, jsonRpcException);
                 }
             }
-
-            JsonRpcException jsonRpcException = new JsonRpcException(0, "", jsonObject);
-            return new Result<>(null, jsonRpcException);
         }
 
         JsonRpcException jsonRpcException = new JsonRpcException(0, "", null);

@@ -1,4 +1,4 @@
-package com.os.operando.gummi.sample.api.exception;
+package com.os.operando.gummi.sample.api;
 
 import com.annimon.stream.Stream;
 import com.google.gson.JsonObject;
@@ -7,7 +7,6 @@ import com.os.operando.guild.Triplet;
 import com.os.operando.gummi.JsonRpc2;
 import com.os.operando.gummi.RequestType;
 import com.os.operando.gummi.Result;
-import com.os.operando.gummi.sample.api.ApiClient2;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +29,7 @@ public class RxApiClient2 {
 
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
             JsonObject jsonObject = jsonrpc.createRequest(requestType);
-            JsonRpc2.Request<T> request = new JsonRpc2.Request<>(requestType, jsonObject.get("id").getAsString());
+            JsonRpc2.Request<T> request = new JsonRpc2.Request<>(requestType, jsonObject.get("id").getAsString(), jsonObject);
 
             List<JsonObject> results = apiClient.request2(jsonrpc, Collections.singletonList(request));
             Result<T> tResult = jsonrpc.parseResponseJson2(results.get(0), request);
@@ -48,8 +47,8 @@ public class RxApiClient2 {
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
 
             List<JsonObject> jsonObjects = jsonrpc.createRequest(requestType1, requestType2);
-            JsonRpc2.Request<T1> request1 = new JsonRpc2.Request<>(requestType1, jsonObjects.get(0).get("id").getAsString());
-            JsonRpc2.Request<T2> request2 = new JsonRpc2.Request<>(requestType2, jsonObjects.get(1).get("id").getAsString());
+            JsonRpc2.Request<T1> request1 = new JsonRpc2.Request<>(requestType1, jsonObjects.get(0).get("id").getAsString(), jsonObjects.get(0));
+            JsonRpc2.Request<T2> request2 = new JsonRpc2.Request<>(requestType2, jsonObjects.get(1).get("id").getAsString(), jsonObjects.get(1));
 
             List<JsonObject> results = apiClient.request2(jsonrpc, Arrays.asList(request1, request2));
 
@@ -70,9 +69,9 @@ public class RxApiClient2 {
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
 
             List<JsonObject> jsonObjects = jsonrpc.createRequest(requestType1, requestType2, requestType3);
-            JsonRpc2.Request<T1> request1 = new JsonRpc2.Request<>(requestType1, jsonObjects.get(0).get("id").getAsString());
-            JsonRpc2.Request<T2> request2 = new JsonRpc2.Request<>(requestType2, jsonObjects.get(1).get("id").getAsString());
-            JsonRpc2.Request<T3> request3 = new JsonRpc2.Request<>(requestType3, jsonObjects.get(2).get("id").getAsString());
+            JsonRpc2.Request<T1> request1 = new JsonRpc2.Request<>(requestType1, jsonObjects.get(0).get("id").getAsString(), jsonObjects.get(0));
+            JsonRpc2.Request<T2> request2 = new JsonRpc2.Request<>(requestType2, jsonObjects.get(1).get("id").getAsString(), jsonObjects.get(1));
+            JsonRpc2.Request<T3> request3 = new JsonRpc2.Request<>(requestType3, jsonObjects.get(2).get("id").getAsString(), jsonObjects.get(2));
 
             List<JsonObject> results = apiClient.request2(jsonrpc, Arrays.asList(request1, request2));
 

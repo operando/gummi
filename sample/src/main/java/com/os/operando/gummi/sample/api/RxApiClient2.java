@@ -30,7 +30,7 @@ public class RxApiClient2 {
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
             JsonRpc2.Request<T> request = jsonrpc.createRequest(requestType);
 
-            List<JsonObject> results = apiClient.request2(jsonrpc, Collections.singletonList(request));
+            List<JsonObject> results = apiClient.request(Collections.singletonList(request));
             Result<T> tResult = jsonrpc.parseResponseJson(results, request);
             if (tResult.isSuccessful()) {
                 singleSubscriber.onSuccess(tResult.value);
@@ -48,7 +48,7 @@ public class RxApiClient2 {
             JsonRpc2.Request<T1> request1 = jsonrpc.createRequest(requestType1);
             JsonRpc2.Request<T2> request2 = jsonrpc.createRequest(requestType2);
 
-            List<JsonObject> results = apiClient.request2(jsonrpc, Arrays.asList(request1, request2));
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
             Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
             Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);
@@ -70,7 +70,7 @@ public class RxApiClient2 {
             JsonRpc2.Request<T2> request2 = jsonrpc.createRequest(requestType2);
             JsonRpc2.Request<T3> request3 = jsonrpc.createRequest(requestType3);
 
-            List<JsonObject> results = apiClient.request2(jsonrpc, Arrays.asList(request1, request2));
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
             Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
             Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);

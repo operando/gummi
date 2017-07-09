@@ -66,7 +66,7 @@ public class ApiClient2 {
         JsonWriter jsonWriter;
         try {
             jsonWriter = gson.newJsonWriter(writer);
-            adapter.write(jsonWriter, jsonrpc.createRequest2(Stream.ofNullable(requests).map(request -> request.requestType).toList()));
+            adapter.write(jsonWriter, Stream.ofNullable(requests).map(request -> request.jsonObject).toList());
             jsonWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class ApiClient2 {
         JsonWriter jsonWriter;
         try {
             jsonWriter = gson.newJsonWriter(writer);
-            adapter.write(jsonWriter, jsonrpc.createRequest2(Stream.ofNullable(requests).map(request -> request.requestType).toList()));
+            adapter.write(jsonWriter, Stream.ofNullable(requests).map(request -> request.jsonObject).toList());
             jsonWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

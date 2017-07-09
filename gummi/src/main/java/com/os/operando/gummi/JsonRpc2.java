@@ -43,14 +43,14 @@ public class JsonRpc2 {
         return requests;
     }
 
-    public List<JsonObject> createRequest2(List<RequestType> requestType) {
-        List<JsonObject> requests = new ArrayList<>();
-        for (RequestType<?> requestType1 : requestType) {
-            String id = requestIdentifierGenerator.next();
-            requests.add(buildJsonFromRequest2(requestType1, id));
-        }
-        return requests;
-    }
+//    public List<JsonObject> createRequest2(List<RequestType> requestType) {
+//        List<JsonObject> requests = new ArrayList<>();
+//        for (RequestType<?> requestType1 : requestType) {
+//            String id = requestIdentifierGenerator.next();
+//            requests.add(buildJsonFromRequest2(requestType1, id));
+//        }
+//        return requests;
+//    }
 
     private JsonObject buildJsonFromRequest2(RequestType<?> requestType, String id) {
         JsonObject jsonObject = new JsonObject();
@@ -61,14 +61,14 @@ public class JsonRpc2 {
         return jsonObject;
     }
 
-    private <T> JsonObject buildJsonFromRequest(RequestType<T> requestType, String id) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add(KEY_PARAMS, GSON.toJsonTree(requestType));
-        jsonObject.addProperty(KEY_METHOD, requestType.getMethod());
-        jsonObject.addProperty(KEY_JSONRPC, VERSION);
-        jsonObject.addProperty(KEY_ID, id);
-        return jsonObject;
-    }
+//    private <T> JsonObject buildJsonFromRequest(RequestType<T> requestType, String id) {
+//        JsonObject jsonObject = new JsonObject();
+//        jsonObject.add(KEY_PARAMS, GSON.toJsonTree(requestType));
+//        jsonObject.addProperty(KEY_METHOD, requestType.getMethod());
+//        jsonObject.addProperty(KEY_JSONRPC, VERSION);
+//        jsonObject.addProperty(KEY_ID, id);
+//        return jsonObject;
+//    }
 
     public static class Request<T> {
         public RequestType<T> requestType;

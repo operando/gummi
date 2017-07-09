@@ -24,26 +24,13 @@ public class JsonRpc2 {
 
     private final RequestIdentifierGenerator requestIdentifierGenerator;
 
-    public static class Request<T> {
-        public RequestType<T> requestType;
-        public String id;
-        public JsonObject jsonObject;
-
-
-        public Request(RequestType<T> requestType, String id, JsonObject jsonObject) {
-            this.requestType = requestType;
-            this.id = id;
-            this.jsonObject = jsonObject;
-        }
-    }
-
     public JsonRpc2(RequestIdentifierGenerator requestIdentifierGenerator) {
         this.requestIdentifierGenerator = requestIdentifierGenerator;
     }
 
-    public <T> Request<T> createRequest(RequestType<T> requestType) {
+    public <T> JsonRpcRequest<T> createRequest(RequestType<T> requestType) {
         String id = requestIdentifierGenerator.next();
-        return new JsonRpc2.Request<>(requestType, id, buildJsonFromRequest(requestType, id));
+        return new JsonRpcRequest<>(requestType, id, buildJsonFromRequest(requestType, id));
     }
 
     private JsonObject buildJsonFromRequest(RequestType<?> requestType, String id) {
@@ -55,7 +42,7 @@ public class JsonRpc2 {
         return jsonObject;
     }
 
-    public <T> Result<T> parseResponseJson(List<JsonObject> jsonObjects, Request<T> request) {
+    public <T> Result<T> parseResponseJson(List<JsonObject> jsonObjects, JsonRpcRequest<T> jsonRpcRequest) {
         for (JsonObject jsonObject : jsonObjects) {
             String version = jsonObject.get(KEY_JSONRPC).getAsString();
             if (!VERSION.equals(version)) {
@@ -68,8 +55,8 @@ public class JsonRpc2 {
             JsonElement result = jsonObject.get(KEY_RESULT);
 
             if (result != null) {
-                if (request.id.equals(id)) {
-                    RequestType<T> requestType = request.requestType;
+                if (jsonRpcRequest.id.equals(id)) {
+                    RequestType<T> requestType = jsonRpcRequest.requestType;
                     T response = GSON.fromJson(result, requestType.getResponseType());
                     if (response == null) {
                         // TODO: error code

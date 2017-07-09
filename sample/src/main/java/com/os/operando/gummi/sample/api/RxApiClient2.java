@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.os.operando.guild.Pair;
 import com.os.operando.guild.Triplet;
 import com.os.operando.gummi.JsonRpc2;
+import com.os.operando.gummi.JsonRpcRequest;
 import com.os.operando.gummi.RequestType;
 import com.os.operando.gummi.Result;
 
@@ -28,7 +29,7 @@ public class RxApiClient2 {
             System.out.println("Thread : " + Thread.currentThread().getName());
 
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
-            JsonRpc2.Request<T> request = jsonrpc.createRequest(requestType);
+            JsonRpcRequest<T> request = jsonrpc.createRequest(requestType);
 
             List<JsonObject> results = apiClient.request(Collections.singletonList(request));
             Result<T> tResult = jsonrpc.parseResponseJson(results, request);
@@ -45,8 +46,8 @@ public class RxApiClient2 {
             System.out.println("Thread : " + Thread.currentThread().getName());
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
 
-            JsonRpc2.Request<T1> request1 = jsonrpc.createRequest(requestType1);
-            JsonRpc2.Request<T2> request2 = jsonrpc.createRequest(requestType2);
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
 
             List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
@@ -66,9 +67,9 @@ public class RxApiClient2 {
         return Observable.create(subscriber -> {
             JsonRpc2 jsonrpc = ApiClient2.createJsonRpc();
 
-            JsonRpc2.Request<T1> request1 = jsonrpc.createRequest(requestType1);
-            JsonRpc2.Request<T2> request2 = jsonrpc.createRequest(requestType2);
-            JsonRpc2.Request<T3> request3 = jsonrpc.createRequest(requestType3);
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
+            JsonRpcRequest<T3> request3 = jsonrpc.createRequest(requestType3);
 
             List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 

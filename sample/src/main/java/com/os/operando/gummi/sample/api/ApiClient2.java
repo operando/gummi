@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.os.operando.gummi.JsonRpc2;
+import com.os.operando.gummi.JsonRpcRequest;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -30,18 +31,18 @@ import okio.Buffer;
 @RequiredArgsConstructor
 public class ApiClient2 {
 
+    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+
     public static JsonRpc2 createJsonRpc() {
         return new JsonRpc2(new NumberIdGenerator());
     }
 
-    public List<JsonObject> request(List<JsonRpc2.Request> requests) {
+    public List<JsonObject> request(List<JsonRpcRequest> requests) {
         return responseFromJsonRpc(requests);
     }
 
-    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-    private List<JsonObject> responseFromJsonRpc(List<JsonRpc2.Request> requests) {
+    private List<JsonObject> responseFromJsonRpc(List<JsonRpcRequest> requests) {
         System.out.println("Thread : " + Thread.currentThread().getName());
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -77,9 +78,6 @@ public class ApiClient2 {
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
                 int statusCode = response.code();
-//                if (apiCallback != null) {
-//                    apiCallback.failure(new ApiResponseException(statusCode, response.message(), response.body()));
-//                }
                 return null;
             }
 
@@ -92,9 +90,6 @@ public class ApiClient2 {
                 value.close();
             }
         } catch (IOException e) {
-//            if (apiCallback != null) {
-//                apiCallback.failure(e);
-//            }
             return null;
         }
     }

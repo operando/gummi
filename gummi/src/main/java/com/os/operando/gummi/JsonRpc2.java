@@ -42,44 +42,46 @@ public class JsonRpc2 {
         return jsonObject;
     }
 
-    public <T> Result<T> parseResponseJson(List<JsonObject> jsonObjects, JsonRpcRequest<T> jsonRpcRequest) {
-        for (JsonObject jsonObject : jsonObjects) {
-            String version = jsonObject.get(KEY_JSONRPC).getAsString();
+    public <T> Result<T> parseResponseJson(List<JsonObject> responseJsonList, JsonRpcRequest<T> jsonRpcRequest) {
+        for (JsonObject responseJson : responseJsonList) {
+            String id = responseJson.get(KEY_ID).getAsString();
+            if (!jsonRpcRequest.id.equals(id)) {
+                continue;
+            }
+
+            String version = responseJson.get(KEY_JSONRPC).getAsString();
             if (!VERSION.equals(version)) {
                 // TODO: error code
-                JsonRpcException jsonRpcException = new JsonRpcException(1, "version mismatch.", jsonObject);
+                JsonRpcException jsonRpcException = new JsonRpcException(1, "version mismatch.", responseJson);
                 return new Result<>(null, jsonRpcException);
             }
 
-            String id = jsonObject.get(KEY_ID).getAsString();
-            JsonElement result = jsonObject.get(KEY_RESULT);
-
+            JsonElement result = responseJson.get(KEY_RESULT);
             if (result != null) {
-                if (jsonRpcRequest.id.equals(id)) {
-                    RequestType<T> requestType = jsonRpcRequest.requestType;
-                    T response = GSON.fromJson(result, requestType.getResponseType());
-                    if (response == null) {
-                        // TODO: error code
-                        JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", jsonObject);
-                        return new Result<>(null, jsonRpcException);
-                    }
-                    return new Result<>(response, null);
+                RequestType<T> requestType = jsonRpcRequest.requestType;
+                T response = GSON.fromJson(result, requestType.getResponseType());
+                if (response == null) {
+                    // TODO: error code
+                    JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", responseJson);
+                    return new Result<>(null, jsonRpcException);
                 }
+                return new Result<>(response, null);
             }
 
-            JsonElement error = jsonObject.get(KEY_ERROR);
+            JsonElement error = responseJson.get(KEY_ERROR);
             if (error != null) {
                 JsonObject errorObject = error.getAsJsonObject();
                 JsonElement code = errorObject.get(KEY_CODE);
                 JsonElement message = errorObject.get(KEY_MESSAGE);
                 if (code != null && message != null) {
-                    JsonRpcException jsonRpcException = new JsonRpcException(code.getAsInt(), message.getAsString(), jsonObject);
+                    JsonRpcException jsonRpcException = new JsonRpcException(code.getAsInt(), message.getAsString(), responseJson);
                     return new Result<>(null, jsonRpcException);
                 }
             }
         }
 
-        JsonRpcException jsonRpcException = new JsonRpcException(0, "", null);
+        // TODO: error code
+        JsonRpcException jsonRpcException = new JsonRpcException(0, "A response with the same id as the request could not be found.", null);
         return new Result<>(null, jsonRpcException);
     }
 }

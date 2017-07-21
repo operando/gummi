@@ -1,4 +1,4 @@
-package com.os.operando.gummi2;
+package com.os.operando.gummi;
 
 public interface RequestType<T> {
 

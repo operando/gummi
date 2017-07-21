@@ -3,10 +3,10 @@ package com.os.operando.gummi.sample.api;
 import com.google.gson.JsonObject;
 import com.os.operando.gummi.sample.model.ResultPair;
 import com.os.operando.gummi.sample.model.ResultTriplet;
-import com.os.operando.gummi2.JsonRpc;
-import com.os.operando.gummi2.JsonRpcRequest;
-import com.os.operando.gummi2.RequestType;
-import com.os.operando.gummi2.Result;
+import com.os.operando.gummi.JsonRpc;
+import com.os.operando.gummi.JsonRpcRequest;
+import com.os.operando.gummi.RequestType;
+import com.os.operando.gummi.Result;
 
 import java.util.Arrays;
 import java.util.Collections;

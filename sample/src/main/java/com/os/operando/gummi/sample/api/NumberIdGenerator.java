@@ -1,6 +1,6 @@
 package com.os.operando.gummi.sample.api;
 
-import com.os.operando.gummi2.RequestIdentifierGenerator;
+import com.os.operando.gummi.RequestIdentifierGenerator;
 
 public class NumberIdGenerator implements RequestIdentifierGenerator {
 

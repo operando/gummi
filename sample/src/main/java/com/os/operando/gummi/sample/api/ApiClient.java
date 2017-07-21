@@ -7,8 +7,8 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.os.operando.gummi2.JsonRpc;
-import com.os.operando.gummi2.JsonRpcRequest;
+import com.os.operando.gummi.JsonRpc;
+import com.os.operando.gummi.JsonRpcRequest;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;

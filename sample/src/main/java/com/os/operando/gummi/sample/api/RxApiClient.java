@@ -4,10 +4,10 @@ import com.annimon.stream.Stream;
 import com.google.gson.JsonObject;
 import com.os.operando.guild.Pair;
 import com.os.operando.guild.Triplet;
-import com.os.operando.gummi2.JsonRpcRequest;
-import com.os.operando.gummi2.RequestType;
-import com.os.operando.gummi2.Result;
-import com.os.operando.gummi2.JsonRpc;
+import com.os.operando.gummi.JsonRpcRequest;
+import com.os.operando.gummi.RequestType;
+import com.os.operando.gummi.Result;
+import com.os.operando.gummi.JsonRpc;
 
 import java.util.Arrays;
 import java.util.Collections;

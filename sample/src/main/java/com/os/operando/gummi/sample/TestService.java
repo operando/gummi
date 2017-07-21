@@ -1,6 +1,6 @@
 package com.os.operando.gummi.sample;
 
-import com.os.operando.gummi.RequestType;
+import com.os.operando.gummi2.RequestType;
 import com.os.operando.gummi.sample.model.TestResponse;
 
 public class TestService extends RequestType<TestResponse> {

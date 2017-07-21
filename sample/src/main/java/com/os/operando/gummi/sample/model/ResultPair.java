@@ -1,6 +1,6 @@
 package com.os.operando.gummi.sample.model;
 
-import com.os.operando.gummi.Result;
+import com.os.operando.gummi2.Result;
 
 import lombok.Getter;
 import lombok.ToString;

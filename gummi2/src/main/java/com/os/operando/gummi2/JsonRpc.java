@@ -1,4 +1,4 @@
-package com.os.operando.gummi;
+package com.os.operando.gummi2;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
-public class JsonRpc2 {
+public class JsonRpc {
 
     private static final String VERSION = "2.0";
 
@@ -24,7 +24,7 @@ public class JsonRpc2 {
 
     private final RequestIdentifierGenerator requestIdentifierGenerator;
 
-    public JsonRpc2(RequestIdentifierGenerator requestIdentifierGenerator) {
+    public JsonRpc(RequestIdentifierGenerator requestIdentifierGenerator) {
         this.requestIdentifierGenerator = requestIdentifierGenerator;
     }
 

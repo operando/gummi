@@ -12,14 +12,8 @@
     tools:context="com.os.operando.gummi.sample.MainActivity">
 
     <Button
-        android:id="@+id/api_1"
+        android:id="@+id/api"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="API 1" />
-
-    <Button
-        android:id="@+id/api_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="API 2" />
+        android:text="API" />
 </LinearLayout>

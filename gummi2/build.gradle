@@ -68,7 +68,7 @@ def loadProperties(filename) {
 }
 
 publish {
-    groupId = 'com.os.operando.gummi2'
+    groupId = 'com.os.operando.gummi'
     artifactId = 'gummi'
     publishVersion = '2.0.0'
     licences = ['Apache-2.0']

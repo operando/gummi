@@ -1,5 +1,6 @@
 package com.os.operando.gummi.sample.api;
 
+import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
@@ -7,7 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.os.operando.gummi.JsonRpc;
-import com.os.operando.gummi.sample.api.exception.ApiResponseException;
+import com.os.operando.gummi.JsonRpcRequest;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -28,24 +29,18 @@ import okio.Buffer;
 @RequiredArgsConstructor
 public class ApiClient {
 
+    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+
     public static JsonRpc createJsonRpc() {
         return new JsonRpc(new NumberIdGenerator());
     }
 
-    public interface ApiCallback {
-        void callback();
-
-        void failure(Throwable throwable);
+    public List<JsonObject> request(List<JsonRpcRequest> requests) {
+        return responseFromJsonRpc(requests);
     }
 
-    public void request(JsonRpc jsonrpc, final ApiCallback apiCallback) {
-        responseFromJsonRpc(jsonrpc, apiCallback);
-    }
-
-    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-    private void responseFromJsonRpc(final JsonRpc jsonrpc, final ApiCallback apiCallback) {
+    private List<JsonObject> responseFromJsonRpc(List<JsonRpcRequest> requests) {
         System.out.println("Thread : " + Thread.currentThread().getName());
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -55,14 +50,16 @@ public class ApiClient {
 
         OkHttpClient client = builder.build();
 
+
         Gson gson = new Gson();
-        TypeAdapter<List<JsonObject>> adapter = gson.getAdapter(new TypeToken<List<JsonObject>>(){});
+        TypeAdapter<List<JsonObject>> adapter = gson.getAdapter(new TypeToken<List<JsonObject>>() {
+        });
         Buffer buffer = new Buffer();
         Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
-        JsonWriter jsonWriter = null;
+        JsonWriter jsonWriter;
         try {
             jsonWriter = gson.newJsonWriter(writer);
-            adapter.write(jsonWriter, jsonrpc.getRequests());
+            adapter.write(jsonWriter, Stream.ofNullable(requests).map(request -> request.jsonObject).toList());
             jsonWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,29 +76,19 @@ public class ApiClient {
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
                 int statusCode = response.code();
-                if (apiCallback != null) {
-                    apiCallback.failure(new ApiResponseException(statusCode, response.message(), response.body()));
-                }
-                return;
+                return null;
             }
 
             ResponseBody value = response.body();
             JsonReader jsonReader = gson.newJsonReader(value.charStream());
             try {
                 List<JsonObject> jsonObjects = adapter.read(jsonReader);
-                for (JsonObject jsonObject : jsonObjects) {
-                    jsonrpc.parseResponseJson(jsonObject);
-                }
-                if (apiCallback != null) {
-                    apiCallback.callback();
-                }
+                return jsonObjects;
             } finally {
                 value.close();
             }
         } catch (IOException e) {
-            if (apiCallback != null) {
-                apiCallback.failure(e);
-            }
+            return null;
         }
     }
 }

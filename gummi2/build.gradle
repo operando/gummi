@@ -70,7 +70,7 @@ def loadProperties(filename) {
 publish {
     groupId = 'com.os.operando.gummi'
     artifactId = 'gummi'
-    publishVersion = '1.0.0'
+    publishVersion = '2.0.0'
     licences = ['Apache-2.0']
     description = "JSON-RPC 2.0 client library in Java."
     website = 'https://github.com/operando/gummi'

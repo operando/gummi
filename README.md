@@ -4,10 +4,10 @@
 
 ### Download
 
-[![Download](https://api.bintray.com/packages/operandoos/maven/gummi/images/download.svg?version=1.0.0) ](https://bintray.com/operandoos/maven/gummi/1.0.0/link) or grab via Gradle:
+[![Download](https://api.bintray.com/packages/operandoos/maven/gummi/images/download.svg?version=2.0.0) ](https://bintray.com/operandoos/maven/gummi/2.0.0/link) or grab via Gradle:
 
 ```gradle
-compile 'com.os.operando.gummi:gummi:1.0.0'
+compile 'com.os.operando.gummi:gummi:2.0.0'
 ```
 
 or Maven:
@@ -16,7 +16,7 @@ or Maven:
 <dependency>
   <groupId>com.os.operando.gummi</groupId>
   <artifactId>gummi</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <type>pom</type>
 </dependency>
 ```

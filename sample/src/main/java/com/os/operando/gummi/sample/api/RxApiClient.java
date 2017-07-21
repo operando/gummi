@@ -1,14 +1,20 @@
 package com.os.operando.gummi.sample.api;
 
 import com.annimon.stream.Stream;
+import com.google.gson.JsonObject;
 import com.os.operando.guild.Pair;
 import com.os.operando.guild.Triplet;
-import com.os.operando.gummi.JsonRpc;
+import com.os.operando.gummi.JsonRpcRequest;
 import com.os.operando.gummi.RequestType;
 import com.os.operando.gummi.Result;
+import com.os.operando.gummi.JsonRpc;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
+import rx.Single;
 
 public class RxApiClient {
 
@@ -18,106 +24,66 @@ public class RxApiClient {
         apiClient = new ApiClient();
     }
 
-    public <T> Observable<T> responseFrom(RequestType<T> requestType) {
-        return Observable.create(new Observable.OnSubscribe<T>() {
+    public <T> Single<T> responseFrom(RequestType<T> requestType) {
+        return Single.create(singleSubscriber -> {
+            System.out.println("Thread : " + Thread.currentThread().getName());
 
-            private Result<T> tResult;
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
+            JsonRpcRequest<T> request = jsonrpc.createRequest(requestType);
 
-            @Override
-            public void call(Subscriber<? super T> subscriber) {
-                JsonRpc jsonrpc = ApiClient.createJsonRpc();
-                jsonrpc.addRequest(requestType, result -> tResult = result);
-
-                apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                    @Override
-                    public void callback() {
-                        if (tResult.isSuccessful()) {
-                            subscriber.onNext(tResult.value);
-                            subscriber.onCompleted();
-                        } else {
-                            subscriber.onError(tResult.throwable);
-                        }
-                    }
-
-                    @Override
-                    public void failure(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                });
+            List<JsonObject> results = apiClient.request(Collections.singletonList(request));
+            Result<T> tResult = jsonrpc.parseResponseJson(results, request);
+            if (tResult.isSuccessful()) {
+                singleSubscriber.onSuccess(tResult.value);
+            } else {
+                singleSubscriber.onError(tResult.throwable);
             }
         });
     }
 
     public <T1, T2> Observable<Pair<T1, T2>> responseFrom(RequestType<T1> requestType1, RequestType<T2> requestType2) {
-        return Observable.create(new Observable.OnSubscribe<Pair<T1, T2>>() {
+        return Observable.create(subscriber -> {
+            System.out.println("Thread : " + Thread.currentThread().getName());
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
 
-            private Result<T1> t1;
-            private Result<T2> t2;
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
 
-            @Override
-            public void call(Subscriber<? super Pair<T1, T2>> subscriber) {
-                System.out.println("Thread : " + Thread.currentThread().getName());
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
-                JsonRpc jsonrpc = ApiClient.createJsonRpc();
-
-                jsonrpc.addRequest(requestType1, result -> t1 = result);
-                jsonrpc.addRequest(requestType2, result -> t2 = result);
-
-                apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                    @Override
-                    public void callback() {
-                        if (t1.isSuccessful() && t2.isSuccessful()) {
-                            Pair<T1, T2> tuple2 = Pair.create(t1.value, t2.value);
-                            subscriber.onNext(tuple2);
-                            subscriber.onCompleted();
-                        } else {
-                            getThrowableStream(t1.throwable, t2.throwable)
-                                    .forEach(subscriber::onError);
-                        }
-                    }
-
-                    @Override
-                    public void failure(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                });
+            Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
+            Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);
+            if (t1Result.isSuccessful() && t2Result.isSuccessful()) {
+                Pair<T1, T2> tuple2 = Pair.create(t1Result.value, t2Result.value);
+                subscriber.onNext(tuple2);
+                subscriber.onCompleted();
+            } else {
+                getThrowableStream(t1Result.throwable, t2Result.throwable).forEach(subscriber::onError);
             }
         });
     }
 
-    public <T1, T2, T3> Observable<Triplet<T1, T2, T3>> responseFrom(RequestType<T1> requestType, RequestType<T2> requestType2, RequestType<T3> requestType3) {
-        return Observable.create(new Observable.OnSubscribe<Triplet<T1, T2, T3>>() {
+    public <T1, T2, T3> Observable<Triplet<T1, T2, T3>> responseFrom(RequestType<T1> requestType1, RequestType<T2> requestType2, RequestType<T3> requestType3) {
+        return Observable.create(subscriber -> {
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
 
-            private Result<T1> t1;
-            private Result<T2> t2;
-            private Result<T3> t3;
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
+            JsonRpcRequest<T3> request3 = jsonrpc.createRequest(requestType3);
 
-            @Override
-            public void call(Subscriber<? super Triplet<T1, T2, T3>> subscriber) {
-                JsonRpc jsonrpc = ApiClient.createJsonRpc();
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
-                jsonrpc.addRequest(requestType, result -> t1 = result);
-                jsonrpc.addRequest(requestType2, result -> t2 = result);
-                jsonrpc.addRequest(requestType3, result -> t3 = result);
+            Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
+            Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);
+            Result<T3> t3Result = jsonrpc.parseResponseJson(results, request3);
 
-                apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                    @Override
-                    public void callback() {
-                        if (t1.isSuccessful() && t2.isSuccessful() && t3.isSuccessful()) {
-                            Triplet<T1, T2, T3> triplet = Triplet.create(t1.value, t2.value, t3.value);
-                            subscriber.onNext(triplet);
-                            subscriber.onCompleted();
-                        } else {
-                            getThrowableStream(t1.throwable, t2.throwable, t3.throwable)
-                                    .forEach(subscriber::onError);
-                        }
-                    }
-
-                    @Override
-                    public void failure(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                });
+            if (t1Result.isSuccessful() && t2Result.isSuccessful() && t3Result.isSuccessful()) {
+                Triplet<T1, T2, T3> triplet = Triplet.create(t1Result.value, t2Result.value, t3Result.value);
+                subscriber.onNext(triplet);
+                subscriber.onCompleted();
+            } else {
+                getThrowableStream(t1Result.throwable, t2Result.throwable, t3Result.throwable)
+                        .forEach(subscriber::onError);
             }
         });
     }

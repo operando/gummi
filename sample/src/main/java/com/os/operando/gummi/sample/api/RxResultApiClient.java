@@ -1,13 +1,18 @@
 package com.os.operando.gummi.sample.api;
 
-import com.os.operando.gummi.JsonRpc;
-import com.os.operando.gummi.RequestType;
-import com.os.operando.gummi.Result;
+import com.google.gson.JsonObject;
 import com.os.operando.gummi.sample.model.ResultPair;
 import com.os.operando.gummi.sample.model.ResultTriplet;
+import com.os.operando.gummi.JsonRpc;
+import com.os.operando.gummi.JsonRpcRequest;
+import com.os.operando.gummi.RequestType;
+import com.os.operando.gummi.Result;
 
-import rx.Observable;
-import rx.Subscriber;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import rx.Single;
 
 public class RxResultApiClient {
 
@@ -17,94 +22,50 @@ public class RxResultApiClient {
         apiClient = new ApiClient();
     }
 
-    public <T> Observable<Result<T>> resultFrom(RequestType<T> requestType) {
-        return Observable.create(
-                new Observable.OnSubscribe<Result<T>>() {
+    public <T> Single<Result<T>> resultFrom(RequestType<T> requestType) {
+        return Single.create(singleSubscriber -> {
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
 
-                    private Result<T> tResult;
+            JsonRpcRequest<T> request = jsonrpc.createRequest(requestType);
 
-                    @Override
-                    public void call(Subscriber<? super Result<T>> subscriber) {
-                        JsonRpc jsonrpc = ApiClient.createJsonRpc();
-                        jsonrpc.addRequest(requestType, result -> tResult = result);
+            List<JsonObject> results = apiClient.request(Collections.singletonList(request));
+            Result<T> tResult = jsonrpc.parseResponseJson(results, request);
 
-                        apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                            @Override
-                            public void callback() {
-                                subscriber.onNext(tResult);
-                                subscriber.onCompleted();
-                            }
-
-                            @Override
-                            public void failure(Throwable throwable) {
-                                subscriber.onError(throwable);
-                            }
-                        });
-                    }
-                }
-
-        );
-    }
-
-    public <T1, T2> Observable<ResultPair<T1, T2>> resultFrom(RequestType<T1> requestType1, RequestType<T2> requestType2) {
-        return Observable.create(new Observable.OnSubscribe<ResultPair<T1, T2>>() {
-
-            private Result<T1> t1;
-            private Result<T2> t2;
-
-            @Override
-            public void call(Subscriber<? super ResultPair<T1, T2>> subscriber) {
-                JsonRpc jsonrpc = ApiClient.createJsonRpc();
-
-                jsonrpc.addRequest(requestType1, result -> t1 = result);
-                jsonrpc.addRequest(requestType2, result -> t2 = result);
-
-                apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                    @Override
-                    public void callback() {
-                        ResultPair<T1, T2> tuple2 = ResultPair.create(t1, t2);
-                        subscriber.onNext(tuple2);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void failure(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                });
-            }
+            singleSubscriber.onSuccess(tResult);
         });
     }
 
-    public <T1, T2, T3> Observable<ResultTriplet<T1, T2, T3>> resultFrom(RequestType<T1> requestType1, RequestType<T2> requestType2, RequestType<T3> requestType3) {
-        return Observable.create(new Observable.OnSubscribe<ResultTriplet<T1, T2, T3>>() {
+    public <T1, T2> Single<ResultPair<T1, T2>> resultFrom(RequestType<T1> requestType1, RequestType<T2> requestType2) {
+        return Single.create(singleSubscriber -> {
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
 
-            private Result<T1> t1;
-            private Result<T2> t2;
-            private Result<T3> t3;
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
 
-            @Override
-            public void call(Subscriber<? super ResultTriplet<T1, T2, T3>> subscriber) {
-                JsonRpc jsonrpc = ApiClient.createJsonRpc();
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2));
 
-                jsonrpc.addRequest(requestType1, result -> t1 = result);
-                jsonrpc.addRequest(requestType2, result -> t2 = result);
-                jsonrpc.addRequest(requestType3, result -> t3 = result);
+            Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
+            Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);
 
-                apiClient.request(jsonrpc, new ApiClient.ApiCallback() {
-                    @Override
-                    public void callback() {
-                        ResultTriplet<T1, T2, T3> tuple2 = ResultTriplet.create(t1, t2, t3);
-                        subscriber.onNext(tuple2);
-                        subscriber.onCompleted();
-                    }
+            singleSubscriber.onSuccess(ResultPair.create(t1Result, t2Result));
+        });
+    }
 
-                    @Override
-                    public void failure(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                });
-            }
+    public <T1, T2, T3> Single<ResultTriplet<T1, T2, T3>> resultFrom(RequestType<T1> requestType1, RequestType<T2> requestType2, RequestType<T3> requestType3) {
+        return Single.create(singleSubscriber -> {
+            JsonRpc jsonrpc = ApiClient.createJsonRpc();
+
+            JsonRpcRequest<T1> request1 = jsonrpc.createRequest(requestType1);
+            JsonRpcRequest<T2> request2 = jsonrpc.createRequest(requestType2);
+            JsonRpcRequest<T3> request3 = jsonrpc.createRequest(requestType3);
+
+            List<JsonObject> results = apiClient.request(Arrays.asList(request1, request2, request3));
+
+            Result<T1> t1Result = jsonrpc.parseResponseJson(results, request1);
+            Result<T2> t2Result = jsonrpc.parseResponseJson(results, request2);
+            Result<T3> t3Result = jsonrpc.parseResponseJson(results, request3);
+
+            singleSubscriber.onSuccess(ResultTriplet.create(t1Result, t2Result, t3Result));
         });
     }
 }

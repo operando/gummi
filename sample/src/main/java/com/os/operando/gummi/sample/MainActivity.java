@@ -19,14 +19,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RxApiClient rxApiClient = new RxApiClient();
-        rxApiClient.responseFrom(new TestService(), new TestService())
-                .flatMap(pair -> rxApiClient.responseFrom(new TestService(), new TestService()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pair -> {
-                    Log.d(TAG, pair.getFirst().toString());
-                    Log.d(TAG, pair.getSecond().toString());
-                });
+        findViewById(R.id.api).setOnClickListener(v -> {
+            RxApiClient rxApiClient = new RxApiClient();
+            rxApiClient.responseFrom(new TestService(), new TestService())
+                    .flatMap(a -> rxApiClient.responseFrom(new TestService(), new TestService()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(pair -> {
+                        Log.d(TAG, pair.getFirst().toString());
+                        Log.d(TAG, pair.getSecond().toString());
+                    }, Throwable::printStackTrace);
+        });
     }
 }

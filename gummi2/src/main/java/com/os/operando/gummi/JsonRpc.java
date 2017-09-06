@@ -52,7 +52,7 @@ public class JsonRpc {
             String version = responseJson.get(KEY_JSONRPC).getAsString();
             if (!VERSION.equals(version)) {
                 // TODO: error code
-                JsonRpcException jsonRpcException = new JsonRpcException(1, "version mismatch.", responseJson);
+                JsonRpcException jsonRpcException = new JsonRpcException(1, "version mismatch.", responseJson, jsonRpcRequest);
                 return new Result<>(null, jsonRpcException);
             }
 
@@ -62,7 +62,7 @@ public class JsonRpc {
                 T response = GSON.fromJson(result, requestType.getResponseType());
                 if (response == null) {
                     // TODO: error code
-                    JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", responseJson);
+                    JsonRpcException jsonRpcException = new JsonRpcException(1, "response is null.", responseJson, jsonRpcRequest);
                     return new Result<>(null, jsonRpcException);
                 }
                 return new Result<>(response, null);
@@ -74,14 +74,14 @@ public class JsonRpc {
                 JsonElement code = errorObject.get(KEY_CODE);
                 JsonElement message = errorObject.get(KEY_MESSAGE);
                 if (code != null && message != null) {
-                    JsonRpcException jsonRpcException = new JsonRpcException(code.getAsInt(), message.getAsString(), responseJson);
+                    JsonRpcException jsonRpcException = new JsonRpcException(code.getAsInt(), message.getAsString(), responseJson, jsonRpcRequest);
                     return new Result<>(null, jsonRpcException);
                 }
             }
         }
 
         // TODO: error code
-        JsonRpcException jsonRpcException = new JsonRpcException(0, "A response with the same id as the request could not be found.", null);
+        JsonRpcException jsonRpcException = new JsonRpcException(0, "A response with the same id as the request could not be found.", null, jsonRpcRequest);
         return new Result<>(null, jsonRpcException);
     }
 }
